@@ -10,7 +10,7 @@ const client = new Client({
 const TOKEN = process.env.TOKEN;
 const LOG_CHANNEL_ID = "1489612253513650307";
 
-client.on("ready", () => {
+client.on("clientReady", () => {
   console.log(`Бот запущен как ${client.user.tag}`);
 });
 
