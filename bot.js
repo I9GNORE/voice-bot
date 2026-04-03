@@ -35,8 +35,4 @@ client.on("voiceStateUpdate", (oldState, newState) => {
 
 client.login(TOKEN);
 
-// чтобы Render не засыпал
-require("http").createServer((req, res) => {
-  res.writeHead(200, { "Content-Type": "text/plain" });
-  res.end("OK");
-}).listen(process.env.PORT || 3000);
+
