@@ -3,15 +3,14 @@ const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildVoiceStates,
-    GatewayIntentBits.GuildMembers
+    GatewayIntentBits.GuildVoiceStates
   ]
 });
 
 const TOKEN = process.env.TOKEN;
 const LOG_CHANNEL_ID = "1489612253513650307";
 
-client.on("clientReady", () => {
+client.on("ready", () => {
   console.log(`Бот запущен как ${client.user.tag}`);
 });
 
@@ -19,42 +18,22 @@ client.on("voiceStateUpdate", (oldState, newState) => {
   const channel = client.channels.cache.get(LOG_CHANNEL_ID);
   if (!channel) return;
 
-  const member = newState.member || oldState.member;
-  const avatar = member.user.displayAvatarURL();
+  const member = newState.member;
+  if (!member) return;
 
-  // Получаем роль (самую высокую)
-  const role = member.roles.highest?.name || "Без роли";
-
-  // 🟢 ЗАШЁЛ
+  // 👉 Только вход в канал
   if (!oldState.channel && newState.channel) {
+
     const embed = new EmbedBuilder()
       .setColor(0x00ff00)
       .setAuthor({
-        name: member.displayName,
-        iconURL: avatar
+        name: member.user.username,
+        iconURL: member.user.displayAvatarURL()
       })
-      .setDescription(
-        `🟢 **Зашёл в голосовой канал**\n\n` +
-        `🎧 Канал: **${newState.channel.name}**\n` +
-        `🏷 Роль: **${role}**`
-      )
-      .setTimestamp();
-
-    channel.send({ embeds: [embed] });
-  }
-
-  // 🔴 ВЫШЕЛ
-  if (oldState.channel && !newState.channel) {
-    const embed = new EmbedBuilder()
-      .setColor(0xff0000)
-      .setAuthor({
-        name: member.displayName,
-        iconURL: avatar
-      })
-      .setDescription(
-        `🔴 **Вышел из голосового канала**\n\n` +
-        `🎧 Канал: **${oldState.channel.name}**\n` +
-        `🏷 Роль: **${role}**`
+      .setDescription(`🟢 **Зашёл в голосовой канал**`)
+      .addFields(
+        { name: "🎧 Канал", value: `**${newState.channel.name}**`, inline: true },
+        { name: "👤 Пользователь", value: `<@${member.id}>`, inline: true }
       )
       .setTimestamp();
 
@@ -64,7 +43,7 @@ client.on("voiceStateUpdate", (oldState, newState) => {
 
 client.login(TOKEN);
 
-// 🌐 сервер для Render
+// чтобы Render не вырубал
 require("http").createServer((req, res) => {
   res.writeHead(200, { "Content-Type": "text/plain" });
   res.end("OK");
