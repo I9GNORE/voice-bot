@@ -35,4 +35,8 @@ client.on("voiceStateUpdate", (oldState, newState) => {
 
 client.login(TOKEN);
 
+require("http").createServer((req, res) => {
+  res.end("OK");
+}).listen(process.env.PORT || 3000);
+
 
