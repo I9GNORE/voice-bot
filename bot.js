@@ -21,21 +21,13 @@ client.on("voiceStateUpdate", (oldState, newState) => {
   const member = newState.member;
   if (!member) return;
 
-  // 👉 Только вход в канал
+  // Только вход в голосовой канал
   if (!oldState.channel && newState.channel) {
 
     const embed = new EmbedBuilder()
-      .setColor(0x00ff00)
-      .setAuthor({
-        name: member.user.username,
-        iconURL: member.user.displayAvatarURL()
-      })
-      .setDescription(`🟢 **Зашёл в голосовой канал**`)
-      .addFields(
-        { name: "🎧 Канал", value: `**${newState.channel.name}**`, inline: true },
-        { name: "👤 Пользователь", value: `<@${member.id}>`, inline: true }
-      )
-      .setTimestamp();
+      .setColor(0x2ecc71) // зелёная линия слева
+      .setDescription(`🔊 **${member.displayName}** зашёл в 🔊・${newState.channel.name}`)
+      .setTimestamp(); // время
 
     channel.send({ embeds: [embed] });
   }
@@ -43,7 +35,7 @@ client.on("voiceStateUpdate", (oldState, newState) => {
 
 client.login(TOKEN);
 
-// чтобы Render не вырубал
+// чтобы Render не засыпал
 require("http").createServer((req, res) => {
   res.writeHead(200, { "Content-Type": "text/plain" });
   res.end("OK");
